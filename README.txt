@@ -1,7 +1,7 @@
 gitosis-send-mail-hook
 
 This is a script that should make it possible to inform all persons that
-have write acces to a gitosis-managed repository upon changes via the
+have acces to a gitosis-managed repository upon changes via the
 post-receive-email script.
 
 Change 
