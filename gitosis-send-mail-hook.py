@@ -63,7 +63,7 @@ class Main(app.App):
 if __name__ == '__main__':
 	repository, ext = os.path.splitext(os.getcwd())
 	if ext != '.git':
-		print os.getcwd()+"is probably not a gitosis repository."
+		log.error(os.getcwd()+"is probably not a gitosis repository.")
 		sys.exit(1)
 	repository=os.path.basename(repository)
 	print ', '.join(Main.getMemberships(repository))
