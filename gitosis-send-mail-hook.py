@@ -14,8 +14,8 @@ class Main(app.App):
 	def __init__(self):
 		self.setup_basic_logging()
 
-	def _getMemberships(self,repository):
-		to_inform=[]
+	def _getDevelopers(self,repository):
+		emails_to_inform=[]
 		
 		parser = self.create_parser()
 		(options, args) = parser.parse_args()
@@ -32,33 +32,33 @@ class Main(app.App):
 				continue
 			group = section[len(GROUP_PREFIX):]
 
-			all_reps=[]
-			for rep_list in ("writable","readonly"):
+			repositories_in_current_group=[]
+			for repository_access_list in ("writable","readonly"):
 				try:
-					reps = cfg.get(section, rep_list)
+					tmp_repositories = cfg.get(section, repository_access_list)
 				except (NoSectionError, NoOptionError):
-					reps = []
+					tmp_repositories = []
 				else:
-					reps = reps.split()
-				all_reps+=reps
+					tmp_repositories = tmp_repositories.split()
+				repositories_in_current_group+=tmp_repositories
 		
-			if repository in all_reps:
+			if repository in repositories_in_current_group:
 				try:
-					members = cfg.get(section, 'members')
+					group_members = cfg.get(section, 'members')
 				except (NoSectionError, NoOptionError):
-					members = []
+					group_members = []
 				else:
-					members = members.split()
-				for member in members:
-					if member not in to_inform:
-						to_inform.append(member)
-		log.debug("info to "+', '.join(to_inform))
-		return to_inform
+					group_members = group_members.split()
+				for member in group_members:
+					if member not in emails_to_inform:
+						emails_to_inform.append(member)
+		log.debug("info to "+', '.join(emails_to_inform))
+		return emails_to_inform
 
 	@classmethod
-	def getMemberships(class_,repository):
+	def getDevelopers(class_,repository):
 		app = class_()
-		return app._getMemberships(repository)
+		return app._getDevelopers(repository)
 		
 if __name__ == '__main__':
 	repository, ext = os.path.splitext(os.getcwd())
@@ -66,5 +66,5 @@ if __name__ == '__main__':
 		log.error(os.getcwd()+"is probably not a gitosis repository.")
 		sys.exit(1)
 	repository=os.path.basename(repository)
-	print ', '.join(Main.getMemberships(repository))
+	print ', '.join(Main.getDevelopers(repository))
 
